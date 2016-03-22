@@ -33,5 +33,6 @@
 
 # Atmel Studio 
 debug/
+.vs/
 *.componentinfo.xml
 *.cppproj
