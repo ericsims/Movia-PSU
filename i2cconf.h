@@ -25,4 +25,6 @@
 #define I2C_SEND_DATA_BUFFER_SIZE		0x20
 #define I2C_RECEIVE_DATA_BUFFER_SIZE	0x20
 
+#define I2C_ADDR 0x04<<1
+
 #endif
