@@ -26,7 +26,9 @@
 bool have_battery, have_usb;
 bool PWR_SW;
 bool charging;
+unsigned long time;
 uint16_t battery_voltage, battery_voltage_POST, USB_voltage;
+double battery_voltage_scaled;
 
 uint8_t registerPosition = 0x00;
 
@@ -84,18 +86,17 @@ void establishContact() {
 
 void i2cSlaveReceiveService(uint8_t receiveDataLength, uint8_t* receiveData)
 {
-	if(*receiveData == 4) {
-		have_usb = 1;
-	} else if(*receiveData == 5) {
-		have_usb = 0;
-	} else {
+	//if(*receiveData == 4) {
+	//	have_usb = 1;
+	//} else if(*receiveData == 5) {
+	//	have_usb = 0;
+	//} else {
 		registerPosition = *receiveData;
-	}
+	//}
 }
 
 uint8_t i2cSlaveTransmitService(uint8_t transmitDataLengthMax, uint8_t* transmitData)
 {
-	char strgy[8] = { 0 };
 	uint8_t data = 0;
 	switch (registerPosition) {
 	case 0: // reg
@@ -122,6 +123,7 @@ uint8_t i2cSlaveTransmitService(uint8_t transmitDataLengthMax, uint8_t* transmit
 
 void startCharge() {
 	charging = true;
+	time = 0;
 	PORTD |= (1<<DDB5);
 	_delay_ms(100);
 	PORTD |= (1<<DDB7);
@@ -144,6 +146,7 @@ void stopCharge() {
 
 int main(void)
 {
+	time = 0;
 	have_battery = false;
 	have_usb = false;
 	PWR_SW = false;
@@ -164,8 +167,11 @@ int main(void)
  	
 	 
 	// therm as input
-	DDRC &= ~(1<<DDC3); 
-	PORTC &= ~(1<<DDC3); 
+	DDRC &= ~(1<<DDC3);
+	PORTC &= ~(1<<DDC3);
+	// 5USB as input
+	DDRC &= ~(1<<DDC1);
+	PORTC &= ~(1<<DDC1);
 	
 	// LED 4 as OUTPUT
 	DDRB |= (1<<DDB0); 
@@ -193,17 +199,33 @@ int main(void)
 		ADCSRA |= (1 << ADSC); // start ADC
 		//while (ADCSRA & (1<<ADSC)); // wait for ADC...
 		battery_voltage = ((double) ADC)/1024.0*256; // Read ADC
-		
-		have_battery = (battery_voltage/256.0*8.9) > 7;
+		battery_voltage_scaled = (battery_voltage/256.0*8.9);
+		have_battery = battery_voltage_scaled > 7;
 		PWR_SW = ~(PINB >> DDB2)&0x01;		 
+		have_usb = (PINC >> DDC1)&0x01;
 		
 		if(have_usb) {
 			PORTB &= ~(1<<PORTB0);
 			_delay_ms(100);
 			PORTB |= (1<<PORTB0);
-			_delay_ms(500);
-			
-			if(!charging) startCharge();
+			_delay_ms(400);
+			if(!charging && battery_voltage_scaled < 8.4) {
+				startCharge();
+			} else {
+				PORTB &= ~(1<<PORTB0);
+				_delay_ms(1000);
+			}
+			time += 500;
+			if(time >= 900000) {
+				stopCharge();
+				_delay_ms(500);
+				for(int i =0; i <20; i++) {
+					PORTB &= ~(1<<PORTB0);
+					_delay_ms(50);
+					PORTB |= (1<<PORTB0);
+					_delay_ms(50);
+				}
+			}
 		} else {
 			if(charging) stopCharge();
 			 if (!have_battery) {
@@ -216,12 +238,12 @@ int main(void)
 				_delay_ms(500);
 			}
 		}
-		char strgy[5] = { 0 };
-		sprintf(strgy, "%d", battery_voltage);
+		/*char strgy[5] = { 0 };
+		sprintf(strgy, "%d", have_usb);
 		serialWrite(strgy[0]);
 		serialWrite(strgy[1]);
 		serialWrite(strgy[2]);
 		serialWrite(strgy[3]);
-		serialWrite('\n');
+		serialWrite('\n');*/
 	}
 }
