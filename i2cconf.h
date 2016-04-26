@@ -1,27 +1,26 @@
-/*! \file i2cconf.h \brief I2C (TWI) interface configuration. */
-//*****************************************************************************
-//
-// File Name	: 'i2cconf.h'
-// Title		: I2C (TWI) interface configuration
-// Author		: Pascal Stang - Copyright (C) 2002-2003
-// Created		: 2002.06.25
-// Revised		: 2003.03.02
-// Version		: 0.7
-// Target MCU	: Atmel AVR series
-// Editor Tabs	: 4
-//
-// This code is distributed under the GNU Public License
-//		which can be found at http://www.gnu.org/licenses/gpl.txt
-//
-//*****************************************************************************
+/*
+ Virus Power Supply
+ I2C (TWI) interface configuration
+ Original Author: Pascal Stang - Copyright (C) 2002-2003
+ Copyright (C) 2016 Movia Robotics LLC
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+*/
 
 #ifndef I2CCONF_H
 #define I2CCONF_H
 
-// define I2C data buffer sizes
-// These buffers are used in interrupt-driven Master sending and receiving,
-// and in slave sending and receiving.  They must be large enough to store
-// the largest I2C packet you expect to send and receive, respectively.
 #define I2C_SEND_DATA_BUFFER_SIZE		0x20
 #define I2C_RECEIVE_DATA_BUFFER_SIZE	0x20
 

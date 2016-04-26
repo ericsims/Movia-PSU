@@ -1,22 +1,22 @@
-/*! \file global.h \brief AVRlib project global include. */
-//*****************************************************************************
-//
-// File Name	: 'global.h'
-// Title		: AVRlib project global include 
-// Author		: Pascal Stang - Copyright (C) 2001-2002
-// Created		: 7/12/2001
-// Revised		: 9/30/2002
-// Version		: 1.1
-// Target MCU	: Atmel AVR series
-// Editor Tabs	: 4
-//
-//	Description : This include file is designed to contain items useful to all
-//					code files and projects.
-//
-// This code is distributed under the GNU Public License
-//		which can be found at http://www.gnu.org/licenses/gpl.txt
-//
-//*****************************************************************************
+/*
+ Virus Power Supply
+ AVRlib project global include 
+ Original Author: Pascal Stang - Copyright (C) 2002-2003
+ Copyright (C) 2016 Movia Robotics LLC
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 3 of the License, or
+ (at your option) any later version.
+ 
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ 
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software Foundation,
+ Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+*/
 
 #ifndef GLOBAL_H
 #define GLOBAL_H
@@ -29,12 +29,7 @@
 // project/system dependent defines
 
 // CPU clock speed
-//#define F_CPU        16000000               		// 16MHz processor
-//#define F_CPU        14745000               		// 14.745MHz processor
 #define F_CPU        8000000               		// 8MHz processor
-//#define F_CPU        7372800               		// 7.37MHz processor
-//#define F_CPU        4000000               		// 4MHz processor
-//#define F_CPU        3686400               		// 3.69MHz processor
 #define CYCLES_PER_US ((F_CPU+500000)/1000000) 	// cpu cycles per microsecond
 
 #endif
