@@ -215,8 +215,8 @@ int main(void)
 				PORTB &= ~(1<<PORTB0);
 				_delay_ms(1000);
 			}
-			time += 500;
-			if(time >= 300000) { // 5 minutes
+			time += 1;
+			if(time >= 300) { // 5 minutes
 				stopCharge();
 				_delay_ms(5000);
 				for(int i =0; i <20; i++) {
@@ -238,13 +238,16 @@ int main(void)
 				_delay_ms(500);
 			}
 		}
-		/*
-		char strgy[5] = { 0 };
-		sprintf(strgy, "%d", have_usb);
+		/*char strgy[10] = { 0 };
+		sprintf(strgy, "%d", time);
 		serialWrite(strgy[0]);
 		serialWrite(strgy[1]);
 		serialWrite(strgy[2]);
 		serialWrite(strgy[3]);
+		serialWrite(strgy[4]);
+		serialWrite(strgy[5]);
+		serialWrite(strgy[6]);
+		serialWrite(strgy[7]);
 		serialWrite('\n');*/
 	}
 }
