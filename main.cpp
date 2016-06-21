@@ -202,6 +202,8 @@ int main(void)
 	ADCSRA |= (1 << ADPS2) | (1 << ADPS1) | (1 << ADPS0);
 	ADCSRA |= (1 << ADEN);
 	
+	stopCharge();
+	
     while (1) {
 		ADMUX = MUX2;
 		ADMUX |= (1 << REFS0);
@@ -217,18 +219,15 @@ int main(void)
 			PORTB &= ~(1<<PORTB0);
 			_delay_ms(100);
 			PORTB |= (1<<PORTB0);
-			_delay_ms(400);
+			_delay_ms(1400);
 			if(!charging && battery_voltage_scaled < 8.4) {
 				startCharge();
-			} else {
-				PORTB &= ~(1<<PORTB0);
-				_delay_ms(1000);
 			}
 			time += 1;
 			if(time >= 300) { // 5 minutes
 				stopCharge();
 				_delay_ms(5000);
-				for(int i =0; i <20; i++) {
+				for(int i =0; i <200; i++) {
 					PORTB &= ~(1<<PORTB0);
 					_delay_ms(50);
 					PORTB |= (1<<PORTB0);
@@ -238,7 +237,7 @@ int main(void)
 		} else {
 			if(charging) stopCharge();
 			 if (!have_battery) {
-			PORTB &= ~(1<<PORTB0);
+			//PORTB &= ~(1<<PORTB0);
 			_delay_ms(50);
 			PORTB |= (1<<PORTB0);
 			_delay_ms(50);
