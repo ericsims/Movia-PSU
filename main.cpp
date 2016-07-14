@@ -35,6 +35,7 @@
 bool have_battery, have_usb;
 bool PWR_SW;
 bool charging;
+bool chargeCycleRunning;
 unsigned long time;
 uint16_t battery_voltage, battery_voltage_POST, USB_voltage;
 double battery_voltage_scaled;
@@ -120,6 +121,9 @@ uint8_t i2cSlaveTransmitService(uint8_t transmitDataLengthMax, uint8_t* transmit
 	case 3: // powersw
 		data = PWR_SW;
 		break;
+	case 4:
+		data = chargeCycleRunning;
+		break;
 	}
 	
 	for(uint8_t i = 0; i < 8; i++)
@@ -134,22 +138,22 @@ void startCharge() {
 	charging = true;
 	time = 0;
 	PORTD |= (1<<DDB5);
-	_delay_ms(100);
+	_delay_ms(200);
 	PORTD |= (1<<DDB7);
-	_delay_ms(100);
+	_delay_ms(200);
 	PORTD |= (1<<DDB6);
-	_delay_ms(100);
+	_delay_ms(200);
 	PORTB |= (1<<DDB1);
 }
 void stopCharge() {
 	PORTB &= ~(1<<DDB1);
-	_delay_ms(100);
+	_delay_ms(200);
 	PORTD &= ~(1<<DDB6);
-	_delay_ms(100);
+	_delay_ms(200);
 	PORTD &= ~(1<<DDB7);
-	_delay_ms(100);
+	_delay_ms(200);
 	PORTD &= ~(1<<DDB5);
-	_delay_ms(100);
+	_delay_ms(200);
 	charging = false;
 }
 
@@ -160,6 +164,7 @@ int main(void)
 	have_usb = false;
 	PWR_SW = false;
 	charging = false;
+	chargeCycleRunning = false;
 	// initialization calls
 	i2cInit();
 	i2cSetLocalDeviceAddr(I2C_ADDR, true);
@@ -216,6 +221,7 @@ int main(void)
 		have_usb = (PINC >> DDC1)&0x01;
 		
 		if(have_usb) {
+			chargeCycleRunning = true;
 			PORTB &= ~(1<<PORTB0);
 			_delay_ms(100);
 			PORTB |= (1<<PORTB0);
@@ -224,10 +230,10 @@ int main(void)
 				startCharge();
 			}
 			time += 1;
-			if(time >= 300) { // 5 minutes
+			if(time >= 600) { // 10 minutes
 				stopCharge();
 				_delay_ms(5000);
-				for(int i =0; i <200; i++) {
+				for(int i =0; i <600; i++) {
 					PORTB &= ~(1<<PORTB0);
 					_delay_ms(50);
 					PORTB |= (1<<PORTB0);
@@ -235,6 +241,7 @@ int main(void)
 				}
 			}
 		} else {
+			chargeCycleRunning = false;
 			if(charging) stopCharge();
 			 if (!have_battery) {
 			//PORTB &= ~(1<<PORTB0);
